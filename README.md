@@ -1,5 +1,7 @@
 # 證件 / 存摺 A4 排版工具 (ID Card & Passbook Layout Master)
 
+https://z88487561.github.io/idpack/
+
 一個純前端運作、保護隱私且支援 PWA（Progressive Web App）的網頁應用程式。專為快速將身分證、健保卡、駕照、存摺等各類證件與文件自動切割、校正並排版至 A4 紙張而設計，支援導出高解析度 JPG、PNG 與 PDF 檔案。
 
 ---
@@ -61,19 +63,3 @@
 ## 🚀 開發與部署
 
 由於本專案為靜態網頁應用程式，無需複雜的後端環境 setup：
-
-1. **本地執行**：
-   使用任何靜態 Web 伺服器（例如 Live Server, HTTP Server, 或 Nginx）開啟專案根目錄即可。
-   ```bash
-   # 使用 npx 快速開啟本地伺服器範例
-   npx serve .
-   ```
-
-2. **部署方式**：
-   可直接部署至 GitHub Pages、Vercel、Netlify 等免費靜態網站託管平台。
-
----
-
-## 📄 授權條款
-
-本專案基於開源架構開發，歡迎自由修改與分享。
