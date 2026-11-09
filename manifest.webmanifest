@@ -3,7 +3,7 @@
   "short_name": "證件A4",
   "description": "自動偵測並裁切證件／存摺，排版到一張A4圖片",
   "start_url": "./index.html",
-  "scope": "./",
+  "scope": "./?=idpack/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#f3f5f9",
