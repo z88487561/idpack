@@ -1,17 +1,33 @@
 {
+  "id": "./?app=idpack",
   "name": "證件A4排版",
   "short_name": "證件A4",
   "description": "自動偵測並裁切證件／存摺，排版到一張A4圖片",
   "start_url": "./index.html",
-  "scope": "./?=idpack/",
+  "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#f3f5f9",
   "theme_color": "#2563eb",
   "lang": "zh-Hant",
   "icons": [
-    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

@@ -180,6 +180,10 @@ function fallbackQuad(c) {
   return [{ x: mx, y: my }, { x: c.width - mx, y: my }, { x: c.width - mx, y: c.height - my }, { x: mx, y: c.height - my }];
 }
 
+function fullQuad(c) {
+  return [{ x: 0, y: 0 }, { x: c.width, y: 0 }, { x: c.width, y: c.height }, { x: 0, y: c.height }];
+}
+
 /* ========== 透視校正裁切 ========== */
 function warp(srcMat, pts) {
   const o = orderPts(pts);
@@ -254,9 +258,19 @@ function renderList() {
     const g = el('div', { className: 'group' });
     const head = el('div', { className: 'ghead' }, el('span', { className: 'name', textContent: img.name }));
     const bAdj = el('button', { className: 'sm', textContent: '調整框選' }); bAdj.onclick = () => openEditor(img);
+    const bFull = el('button', { className: 'sm', textContent: '整張為證件', title: '把整張照片視為單一證件（適用滿版拍攝）' });
+    bFull.onclick = async () => {
+      setStatus('套用整張…'); await tick();
+      try {
+        const cv = await fileToCanvas(img.file);
+        img.quads = [{ pts: fullQuad(cv), on: true, rot: 0, type: 'card', crop: null }]; img.fallback = false;
+        buildCrops(img, cv);
+      } catch (e) { alert('處理失敗：' + (e.message || e)); }
+      setStatus(''); renderList(); schedule();
+    };
     const bDel = el('button', { className: 'sm danger', textContent: '移除' });
     bDel.onclick = () => { S.images = S.images.filter(i => i !== img); renderList(); schedule(); };
-    head.append(bAdj, bDel); g.append(head);
+    head.append(bAdj, bFull, bDel); g.append(head);
     if (img.fallback) g.append(el('p', { className: 'warn', textContent: '未偵測到證件，已先以整張圖處理；可按「調整框選」手動框出。' }));
     const chips = el('div', { className: 'chips' });
     if (!img.quads.length) chips.append(el('span', { className: 'muted', textContent: '（沒有任何框）' }));
@@ -454,7 +468,7 @@ async function openEditor(img) {
   try { ED.canvas = await fileToCanvas(img.file); } catch (e) { setStatus(''); return alert('無法載入原圖'); }
   setStatus('');
   ED.img = img; ED.sel = 0;
-  ED.quads = img.quads.map(q => ({ pts: q.pts.map(p => ({ ...p })), on: q.on, rot: q.rot }));
+  ED.quads = img.quads.map(q => ({ pts: q.pts.map(p => ({ ...p })), on: q.on, rot: q.rot, type: q.type }));
   $('#edtitle').textContent = '調整框選：' + img.name;
   $('#editor').hidden = false; fitEditor(); drawEditor();
 }
@@ -499,6 +513,9 @@ $('#edAdd').onclick = () => {
   const w = ED.canvas.width, h = ED.canvas.height, x0 = w * 0.25, x1 = w * 0.75, y0 = h * 0.3, y1 = h * 0.7;
   ED.quads.push({ pts: [{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }], on: true, rot: 0 });
   ED.sel = ED.quads.length - 1; drawEditor();
+};
+$('#edFull').onclick = () => {
+  ED.quads = [{ pts: fullQuad(ED.canvas), on: true, rot: 0, type: 'card' }]; ED.sel = 0; drawEditor();
 };
 $('#edDel').onclick = () => { if (ED.quads[ED.sel]) { ED.quads.splice(ED.sel, 1); ED.sel = 0; drawEditor(); } };
 $('#edAuto').onclick = () => {
