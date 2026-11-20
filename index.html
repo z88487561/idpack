@@ -105,9 +105,9 @@
    C.mount：觸發按鈕放進頁面自己的版面（沿用頁面的 class）；找不到容器才退回浮動 ⚙。
    C.th / C.thd：對話框配色（可寫 var(--頁面變數)）；C.thd 為深色時的覆蓋，C.dk 為判斷深色的選擇器。 */
 (function(){
-var C={"name": "證件A4排版", "install": true, "ls": [], "idb": [], "cache": ["idpack-"], "mount": {"sel": "header", "style": "background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:99px;padding:2px 10px;font-size:12px", "label": "⚙ App"}, "th": {"bg": "var(--card)", "fg": "var(--fg)", "mu": "var(--mut)", "bd": "var(--line)", "ac": "var(--pri)", "acfg": "#fff", "dan": "var(--dan)", "nb": "var(--bg)", "r": "12px"}};
+var C={"name": "證件A4排版", "install": true, "ls": [], "idb": [], "cache": ["idpack-"], "inst": {"label": "安裝 App", "style": "background:#fff;color:var(--pri);border:0;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600"}, "mount": {"sel": "header", "style": "background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:99px;padding:2px 10px;font-size:12px", "label": "⚙ App"}, "th": {"bg": "var(--card)", "fg": "var(--fg)", "mu": "var(--mut)", "bd": "var(--line)", "ac": "var(--pri)", "acfg": "#fff", "dan": "var(--dan)", "nb": "var(--bg)", "r": "12px"}};
 if(window.PWAManage)return;
-var dip=null,host,sr,trig,wiping=false;
+var dip=null,host,sr,trig,inst,mlOrig,wiping=false;
 var sa=function(){try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
 var ios=function(){return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)};
 var cap=function(){try{return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}catch(e){return false}};
@@ -121,6 +121,7 @@ function upd(){
   if(!sr)return;
   var b=q('#i'),t=q('#t'),s=sa();
   b.hidden=!(C.install&&dip&&!s);
+  if(inst){var v=!!(C.install&&dip&&!s);inst.hidden=!v;if(trig&&mlOrig==='auto')trig.style.marginLeft=v?'0':'auto'}
   t.textContent=cap()?'App 版本：要移除請到系統設定的應用程式':s?'已安裝（目前以 App 模式開啟）':!C.install?'':dip?'可安裝到桌面／主畫面':ios()?'iPhone／iPad：Safari 分享 → 加入主畫面':'可用瀏覽器選單的「安裝應用程式」（若已安裝，可能偵測不到）';
 }
 function theme(){
@@ -156,6 +157,14 @@ function build(){
     trig.textContent=m.label||'⚙';trig.title=m.title||'App 安裝與資料管理';trig.setAttribute('aria-label',m.title||'App 安裝與資料管理');
     trig.onclick=open;
     if(m.pos==='after')at.after(trig);else if(m.pos==='before')at.before(trig);else at.appendChild(trig);
+    mlOrig=trig.style.marginLeft;
+    if(C.inst){
+      inst=document.createElement('button');inst.type='button';inst.id='pwa-install-btn';inst.hidden=true;
+      inst.className=C.inst.cls||'';if(C.inst.style)inst.style.cssText=C.inst.style;
+      inst.textContent=C.inst.label||'安裝 App';
+      inst.onclick=function(){if(!dip)return;try{dip.prompt();dip.userChoice&&dip.userChoice.then(function(){dip=null;upd()},function(){})}catch(e){}};
+      trig.before(inst);
+    }
   }
   q('#c').onclick=close;
   q('#m').onclick=function(e){if(e.target.id==='m')close()};
