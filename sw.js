@@ -1,7 +1,7 @@
-const CACHE='idpack-v4';
+const CACHE='idpack-v5';
 const SHELL=['./','index.html','app.js','style.css','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()));});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('idpack-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 // stale-while-revalidate：App 殼與 OpenCV.js（首次載入後可離線使用）
 self.addEventListener('fetch',e=>{
   const req=e.request;
